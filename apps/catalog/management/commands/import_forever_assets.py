@@ -124,7 +124,9 @@ class Command(BaseCommand):
         target_dir.mkdir(parents=True, exist_ok=True)
         for source in source_dir.iterdir():
             if source.is_file():
-                shutil.copy2(source, target_dir / source.name)
+                target = target_dir / source.name
+                if source.resolve() != target.resolve():
+                    shutil.copy2(source, target)
 
     def _ensure_categories(self, products):
         categories = {}

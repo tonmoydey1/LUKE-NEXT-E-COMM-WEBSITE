@@ -148,7 +148,9 @@ class Command(BaseCommand):
             target_dir.mkdir(parents=True, exist_ok=True)
             for source in source_dir.iterdir():
                 if source.is_file():
-                    shutil.copy2(source, target_dir / source.name)
+                    destination = target_dir / source.name
+                    if source.resolve() != destination.resolve():
+                        shutil.copy2(source, destination)
 
     def _upsert_categories(self):
         parent, _ = Category.objects.update_or_create(
