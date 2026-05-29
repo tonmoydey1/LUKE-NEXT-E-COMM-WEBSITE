@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Wishlist | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container">
+    <div class="wishlist-hero">
+      <div>
+        <span class="badge badge-gold">Saved products</span>
+        <h1 class="section-title">Wishlist</h1>
+        <p>Keep your favorite LuxeNest products ready for checkout, gifting, or price comparison.</p>
+      </div>
+      <a class="btn btn-outline-primary" href="{% url 'catalog:product_list' %}">Continue Shopping</a>
+    </div>
+    <div class="product-grid wishlist-grid">
+      {% for item in items %}
+        {% with product=item.product %}{% include "includes/product_card.html" %}{% endwith %}
+      {% empty %}
+        <div class="wishlist-empty">
+          <span>&#9825;</span>
+          <h5>Your wishlist is empty</h5>
+          <p>Save products you love and return to them anytime. Great picks deserve a second look.</p>
+          <a class="lux-btn d-inline-block" href="{% url 'catalog:product_list' %}">Browse Products</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Premium Payment | LuxeNest{% endblock %}
+{% block content %}
+<section class="payment-page py-5">
+  <div class="container col-lg-6">
+    <div class="checkout-panel payment-card p-4">
+      <span class="badge badge-gold">Premium payment</span>
+      <h1 class="section-title mt-3">{{ plan.name }}</h1>
+      <p class="text-muted">Choose a secure payment option to activate LuxeNest Premium.</p>
+      <div class="summary-total mb-3"><span>Total</span><strong>Rs. {{ payment.amount }}</strong></div>
+      <form id="premium-payment-form" method="post" action="{% url 'accounts:premium_verify' %}">
+        {% csrf_token %}
+        <input type="hidden" name="payment_id" value="{{ payment.id }}">
+        <input type="hidden" name="razorpay_order_id" value="{{ razorpay_order.id }}">
+        <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+        <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+        {% if not is_demo_payment %}
+          <div class="premium-payments mb-3">
+            <label>
+              <input type="radio" name="selected_payment_mode" value="upi" {% if payment.method == "upi" %}checked{% endif %}>
+              UPI
+              <small>GPay / PhonePe / Paytm</small>
+            </label>
+            <label>
+              <input type="radio" name="selected_payment_mode" value="card" {% if payment.method == "card" %}checked{% endif %}>
+              Card
+              <small>Debit / Credit / EMI</small>
+            </label>
+          </div>
+          <div class="upi-test-box mb-3" data-upi-test-box>
+            <label class="fw-bold">UPI ID</label>
+            <input class="form-control" name="sandbox_upi_id" value="success@luxenest" aria-label="UPI ID">
+            <small>Enter a UPI ID to continue through LuxeNest Pay sandbox.</small>
+          </div>
+        {% endif %}
+        {% if is_demo_payment %}
+          <div class="empty-state mb-3">
+            <h5>Razorpay setup required</h5>
+            <p>Real-time UPI/Card payments need valid Razorpay API keys in `.env`. Add your test or live keys, restart the server, and this page will open the Razorpay Checkout popup.</p>
+            {% if razorpay_order.reason %}<p class="text-danger fw-bold mb-0">Razorpay response: {{ razorpay_order.reason }}</p>{% endif %}
+          </div>
+          <button class="lux-btn w-100" disabled>Payment Gateway Not Connected</button>
+          <a class="btn btn-outline-primary w-100 mt-3" href="{% url 'accounts:premium_payment' payment.id %}">Retry Razorpay Connection</a>
+        {% else %}
+          <button type="button" id="sandbox-upi-button" class="lux-btn w-100">Verify & Pay with UPI</button>
+          <button type="button" id="rzp-premium-button" class="lux-btn w-100 d-none">Pay Securely by Card</button>
+          <p class="small text-muted mt-3 mb-0">UPI runs through LuxeNest Pay sandbox for local demonstrations. Card opens Razorpay Checkout.</p>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</section>
+{% if not is_demo_payment %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const premiumForm = document.getElementById("premium-payment-form");
+  const paymentModeInputs = document.querySelectorAll("input[name='selected_payment_mode']");
+  const upiBox = document.querySelector("[data-upi-test-box]");
+  const upiButton = document.getElementById("sandbox-upi-button");
+  const cardButton = document.getElementById("rzp-premium-button");
+  const updatePaymentMode = () => {
+    const selected = document.querySelector("input[name='selected_payment_mode']:checked").value;
+    upiBox.classList.toggle("d-none", selected !== "upi");
+    upiButton.classList.toggle("d-none", selected !== "upi");
+    cardButton.classList.toggle("d-none", selected !== "card");
+  };
+  paymentModeInputs.forEach((input) => input.addEventListener("change", updatePaymentMode));
+  updatePaymentMode();
+
+  upiButton.addEventListener("click", function () {
+      const upiId = document.querySelector("[name='sandbox_upi_id']").value.trim();
+      if (!upiId || !upiId.includes("@")) {
+        alert("Please enter a valid UPI ID.");
+        return;
+      }
+      document.getElementById("razorpay_payment_id").value = "lxn_test_premium_{{ payment.transaction_id }}";
+      document.getElementById("razorpay_signature").value = "lxn_debug_signature";
+      premiumForm.submit();
+  });
+  document.getElementById("rzp-premium-button").addEventListener("click", function () {
+    const displayConfig = {
+      blocks: {
+        preferred: {
+          name: "Pay using Card",
+          instruments: [{ method: "card" }]
+        }
+      },
+      sequence: ["block.preferred"],
+      preferences: { show_default_blocks: false }
+    };
+    const checkout = new Razorpay({
+      key: "{{ razorpay_key_id }}",
+      amount: "{{ razorpay_order.amount }}",
+      currency: "INR",
+      name: "LuxeNest",
+      description: "{{ plan.name }}",
+      order_id: "{{ razorpay_order.id }}",
+      remember_customer: false,
+      config: { display: displayConfig },
+      prefill: {
+        name: "{{ request.user.get_full_name|default:request.user.username }}",
+        email: "{{ request.user.email }}",
+        contact: "{{ request.user.profile.phone }}"
+      },
+      theme: { color: "#0B4AA2" },
+      modal: {
+        escape: true,
+        ondismiss: function () {
+          const note = document.querySelector("[data-payment-note]");
+          if (note) note.textContent = "Payment window closed. You can retry or choose another method inside Razorpay.";
+        }
+      },
+      handler: function (response) {
+        document.getElementById("razorpay_payment_id").value = response.razorpay_payment_id;
+        document.getElementById("razorpay_signature").value = response.razorpay_signature;
+        premiumForm.submit();
+      }
+    });
+    checkout.open();
+  });
+</script>
+{% endif %}
+{% endblock %}

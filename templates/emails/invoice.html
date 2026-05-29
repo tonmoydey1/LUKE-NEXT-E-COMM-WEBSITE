@@ -1,0 +1,12 @@
+<div style="margin:0;background:#f5f8fc;padding:28px 0;font-family:Inter,Arial,sans-serif;color:#0f172a">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5eaf3;border-radius:14px;overflow:hidden">
+    <tr><td style="background:#062f69;padding:28px;color:#ffffff;border-bottom:5px solid #d7a928"><h1 style="margin:0;color:#ffffff">Your LuxeNest invoice is ready</h1><p style="margin:8px 0 0;color:#eaf2ff">Invoice PDF attached for order {{ order.order_id }}</p></td></tr>
+    <tr><td style="padding:28px">
+      <p>Hello {{ order.user.first_name|default:order.user.username }},</p>
+      <p>Thank you for shopping with LuxeNest. Your invoice is attached as a PDF.</p>
+      <div style="background:#fff8df;border:1px solid #f0d77a;border-radius:10px;padding:16px;margin:18px 0"><strong>Total paid/payable</strong><br><span style="font-size:24px;color:#062f69;font-weight:900">Rs. {{ order.total|floatformat:2 }}</span></div>
+      <p style="color:#667085">This is a computer-generated invoice and is valid without a physical signature.</p>
+    </td></tr>
+    <tr><td style="padding:18px 28px;background:#08111f;color:#cbd5e1;font-size:13px">LuxeNest Support: tonmoydeyrick@gmail.com</td></tr>
+  </table>
+</div>

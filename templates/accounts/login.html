@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Login | LuxeNest{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="container">
+    <div class="auth-shell">
+      <div class="auth-copy">
+        <span class="badge badge-gold">Secure account access</span>
+        <h1>Welcome back</h1>
+        <p>Track orders, manage addresses, save wishlist items, and unlock LuxeNest Premium benefits from one polished dashboard.</p>
+        <div class="auth-benefits">
+          <span>Order lifecycle tracking</span>
+          <span>Premium member offers</span>
+          <span>Secure payment records</span>
+        </div>
+      </div>
+      <form class="auth-panel auth-form" method="post">
+        {% csrf_token %}
+        <h2 class="section-title">Login</h2>
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        <label for="{{ form.username.id_for_label }}">Username or email</label>
+        {{ form.username }}
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+        <button class="lux-btn w-100 mt-3">Login</button>
+        <div class="auth-links">
+          <a href="{% url 'accounts:forgot_password' %}">Forgot password?</a>
+          <span>New here?</span>
+          <a href="{% url 'accounts:register' %}">Create account</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

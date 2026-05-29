@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Invoice {{ order.order_id }} | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container invoice-page-container">
+    <div class="invoice-web">
+      <div class="invoice-hero">
+        <div class="invoice-brand-block">
+          <span class="badge badge-gold">Tax Invoice</span>
+          <h1>LuxeNest</h1>
+          <p>Premium shopping invoice for order <strong>{{ order.order_id }}</strong></p>
+          <div class="invoice-trust-row">
+            <span>GST-ready billing</span>
+            <span>Secure payment record</span>
+            <span>Digital copy available</span>
+          </div>
+        </div>
+        <div class="invoice-id-card">
+          <small>Invoice Number</small>
+          <strong>INV-{{ order.order_id }}</strong>
+          <span>Issued {{ order.created_at|date:"d M Y" }}</span>
+          <div class="invoice-actions">
+            <a class="lux-btn" href="?download=pdf">Download PDF</a>
+            <a class="btn btn-outline-primary" href="{% url 'orders:send_invoice' order.order_id %}">Email Invoice</a>
+          </div>
+        </div>
+      </div>
+      <div class="invoice-parties">
+        <div><span class="invoice-mini-icon">&#128100;</span><h6>Billed To</h6><p>{{ order.user.get_full_name|default:order.user.username }}<br>{{ order.user.email }}</p></div>
+        <div><span class="invoice-mini-icon">&#128205;</span><h6>Shipping Address</h6><p>{{ order.address.full_name }}<br>{{ order.address.line1 }}{% if order.address.line2 %}, {{ order.address.line2 }}{% endif %}<br>{{ order.address.city }}, {{ order.address.state }} - {{ order.address.pincode }}<br>Phone: {{ order.address.phone }}</p></div>
+        <div><span class="invoice-mini-icon">&#128179;</span><h6>Payment</h6><p>{{ order.payment_method|upper }}<br>{{ order.get_status_display }}</p></div>
+      </div>
+      <div class="invoice-table">
+        <div class="invoice-table-title">
+          <div>
+            <span class="badge badge-gold">Items purchased</span>
+            <h3>Order Summary</h3>
+          </div>
+          <a class="btn btn-outline-secondary" href="?download=pdf&email=1">Download & Email</a>
+        </div>
+        <div class="invoice-table-head"><span>Product</span><span>Qty</span><span>Unit Price</span><span>Total</span></div>
+        {% for item in order.items.all %}
+          <div class="invoice-line"><span>{{ item.product_name }}<small>{{ item.variant_label|default:"Standard" }} | GST {{ item.gst_rate|floatformat:0 }}%</small></span><span>{{ item.quantity }}</span><span>Rs. {{ item.unit_price|floatformat:2 }}</span><span>Rs. {{ item.line_total|floatformat:2 }}</span></div>
+        {% endfor %}
+      </div>
+      <div class="invoice-bottom">
+        <div class="invoice-note">
+          <h6>Thank you for shopping with LuxeNest.</h6>
+          <p>This invoice is computer generated and valid without a physical signature. For help, contact support at tonmoydeyrick@gmail.com.</p>
+        </div>
+        <div class="invoice-total-box">
+          <div><span>Subtotal</span><strong>Rs. {{ order.subtotal|floatformat:2 }}</strong></div>
+          <div><span>GST/Tax</span><strong>Rs. {{ order.tax|floatformat:2 }}</strong></div>
+          <div><span>Shipping</span><strong>Rs. {{ order.shipping|floatformat:2 }}</strong></div>
+          <div><span>Discount</span><strong>- Rs. {{ order.discount|floatformat:2 }}</strong></div>
+          <div class="grand"><span>Grand Total</span><strong>Rs. {{ order.total|floatformat:2 }}</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

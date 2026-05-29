@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Premium Details | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container">
+    <div class="page-heading">
+      <span class="badge badge-gold">Membership</span>
+      <h1 class="section-title">Premium Subscription Details</h1>
+      <p class="text-muted">Manage LuxeNest Premium benefits, validity, payments, and cancellation from one place.</p>
+    </div>
+
+    <div class="premium-details-grid">
+      <div class="dashboard-panel p-4 premium-summary-card">
+        {% if active_membership %}
+          <span class="premium-orb">&#10022;</span>
+          <span class="badge badge-gold">Active Premium</span>
+          <h2>{{ active_membership.get_plan_display }} Plan</h2>
+          <p>Priority delivery, premium-only offers, early access deals, invoice priority, and extra member discounts are active on your account.</p>
+          <div class="subscription-metrics">
+            <div><small>Started</small><strong>{{ active_membership.starts_at|date:"d M Y" }}</strong></div>
+            <div><small>Expires</small><strong>{{ active_membership.expires_at|date:"d M Y" }}</strong></div>
+            <div><small>Amount</small><strong>Rs. {{ active_membership.amount|floatformat:2 }}</strong></div>
+          </div>
+          <a class="btn btn-outline-danger w-100 mt-4" href="{% url 'accounts:premium_cancel' %}">Cancel Premium Membership</a>
+        {% else %}
+          <span class="badge badge-gold">Standard account</span>
+          <h2>No active Premium plan</h2>
+          <p>Your account is currently on the standard LuxeNest plan. Activate Premium for member-only savings and faster checkout benefits.</p>
+          <a class="lux-btn d-inline-flex mt-2" href="{% url 'accounts:premium' %}">Activate Premium</a>
+        {% endif %}
+      </div>
+
+      <div class="dashboard-panel p-4">
+        <h4 class="fw-bold mb-3">Premium Benefits</h4>
+        <div class="benefit-list">
+          <span>Priority delivery and better ETA handling</span>
+          <span>Premium-only discounts and early access deals</span>
+          <span>Professional invoice and order update priority</span>
+          <span>Gold Premium badge in your LuxeNest account</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-panel p-4 mt-4">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h4 class="fw-bold mb-0">Subscription History</h4>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'accounts:premium' %}">Change Plan</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-middle premium-table">
+          <thead><tr><th>Plan</th><th>Status</th><th>Started</th><th>Expires</th><th>Amount</th></tr></thead>
+          <tbody>
+            {% for membership in memberships %}
+              <tr>
+                <td>{{ membership.get_plan_display }}</td>
+                <td>{% if membership.currently_active %}<span class="status-pill success">Active</span>{% else %}<span class="status-pill muted">Inactive</span>{% endif %}</td>
+                <td>{{ membership.starts_at|date:"d M Y" }}</td>
+                <td>{{ membership.expires_at|date:"d M Y" }}</td>
+                <td>Rs. {{ membership.amount|floatformat:2 }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5">No subscription history yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dashboard-panel p-4 mt-4">
+      <h4 class="fw-bold mb-3">Premium Payment Activity</h4>
+      {% for payment in payments %}
+        <div class="payment-activity-row">
+          <span><strong>{{ payment.get_plan_display }}</strong><small>{{ payment.transaction_id }}</small></span>
+          <span>{{ payment.method|upper }}</span>
+          <span>Rs. {{ payment.amount|floatformat:2 }}</span>
+          <em class="status-pill {% if payment.status == 'success' %}success{% elif payment.status == 'failed' %}danger{% else %}muted{% endif %}">{{ payment.get_status_display }}</em>
+          {% if payment.status == 'success' %}<a class="btn btn-sm btn-outline-primary" href="{% url 'accounts:premium_invoice' payment.id %}">Invoice</a>{% endif %}
+        </div>
+      {% empty %}
+        <div class="empty-state"><h5>No premium payments yet</h5><p>Your successful and attempted membership payments will appear here.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

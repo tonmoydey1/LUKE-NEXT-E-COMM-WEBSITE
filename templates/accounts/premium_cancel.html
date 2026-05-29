@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Cancel Premium | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container">
+    <div class="cancel-confirm-shell dashboard-panel p-4">
+      <span class="badge badge-gold">Confirm cancellation</span>
+      <h1 class="section-title mt-2">Cancel Premium Membership?</h1>
+      <p class="text-muted">This will turn off your active LuxeNest Premium benefits and remove the Premium Member badge from the navbar.</p>
+
+      <div class="cancel-plan-card">
+        <div>
+          <small>Current plan</small>
+          <strong>{{ membership.get_plan_display }} Plan</strong>
+        </div>
+        <div>
+          <small>Valid until</small>
+          <strong>{{ membership.expires_at|date:"d M Y" }}</strong>
+        </div>
+        <div>
+          <small>Amount paid</small>
+          <strong>Rs. {{ membership.amount|floatformat:2 }}</strong>
+        </div>
+      </div>
+
+      <div class="cancel-warning">
+        <strong>Before you cancel</strong>
+        <span>You will lose premium-only discounts, priority delivery messaging, and the gold account badge immediately in this demo project.</span>
+      </div>
+
+      <form method="post" action="{% url 'accounts:premium_cancel' %}" class="cancel-actions">
+        {% csrf_token %}
+        <input type="hidden" name="confirm_cancel" value="yes">
+        <a class="btn btn-outline-primary" href="{% url 'accounts:premium_details' %}">Keep Premium</a>
+        <button class="btn btn-danger" type="submit">Yes, Cancel Membership</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

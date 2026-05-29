@@ -1,0 +1,7 @@
+<svg width="640" height="480" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="480" fill="#f4f7fb"/>
+  <rect x="160" y="90" width="320" height="300" rx="22" fill="#ffffff" stroke="#dbe4f0"/>
+  <path d="M230 310l62-76 48 54 38-41 72 63H230z" fill="#d7a928" opacity=".8"/>
+  <circle cx="390" cy="175" r="34" fill="#0b4aa2" opacity=".75"/>
+  <text x="233" y="420" font-family="Arial" font-size="28" font-weight="700" fill="#0f172a">LuxeNest</text>
+</svg>

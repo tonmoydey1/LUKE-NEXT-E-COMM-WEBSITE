@@ -1,0 +1,30 @@
+<section class="ai-chat-widget" data-ai-chat>
+  <button class="ai-chat-launcher" type="button" data-ai-chat-toggle aria-label="Open Ask Tonmoy AI help chat">
+    <span>AI</span>
+    <strong>Ask Tonmoy</strong>
+  </button>
+  <div class="ai-chat-panel" data-ai-chat-panel aria-live="polite">
+    <div class="ai-chat-head">
+      <div>
+        <span class="badge badge-gold">Ask Tonmoy AI</span>
+        <h6>LuxeNest shopping help</h6>
+      </div>
+      <button type="button" data-ai-chat-close aria-label="Close chat">&times;</button>
+    </div>
+    <div class="ai-chat-body" data-ai-chat-body>
+      <div class="ai-message bot">
+        Hi, I am Ask Tonmoy AI. Ask me about products, delivery, UPI/card/COD payment, invoices, premium membership, or order tracking.
+      </div>
+      <div class="ai-quick-row">
+        <button type="button" data-ai-prompt="Suggest premium jackets">Jackets</button>
+        <button type="button" data-ai-prompt="How do I check delivery?">Delivery</button>
+        <button type="button" data-ai-prompt="How invoice PDF works?">Invoice</button>
+      </div>
+    </div>
+    <form class="ai-chat-form" data-ai-chat-form action="{% url 'catalog:ai_help_chat' %}" method="post">
+      {% csrf_token %}
+      <input name="message" autocomplete="off" placeholder="Type your question...">
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</section>

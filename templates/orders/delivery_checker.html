@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Check Delivery | LuxeNest{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<section class="delivery-page py-5">
+  <div class="container">
+    <div class="page-heading delivery-heading">
+      <span class="badge badge-gold">India-wide delivery</span>
+      <h1 class="section-title">Check Delivery Availability</h1>
+      <p class="text-muted">Verify pincode serviceability, preview ETA, and pin your delivery location on the map.</p>
+    </div>
+    <div class="delivery-layout">
+      <div class="checkout-panel delivery-control-panel p-4">
+        <div class="delivery-icon-card">&#128205;</div>
+        <h3>Where should LuxeNest deliver?</h3>
+        <p class="text-muted">Enter a 6-digit Indian pincode or use your current location to preview serviceability.</p>
+        <form data-delivery-map-check class="delivery-form">
+          <label class="fw-bold">Pincode</label>
+          <div class="input-group mb-3">
+            <input class="form-control" maxlength="6" name="pincode" placeholder="Enter 6-digit pincode">
+            <button class="btn btn-blue">Check</button>
+          </div>
+          <button class="btn btn-outline-primary w-100" type="button" data-use-location>Use Current Location</button>
+          <div data-delivery-result class="delivery-result mt-3"></div>
+        </form>
+        <div class="delivery-promise-grid">
+          <span>Fast ETA</span>
+          <span>Serviceability check</span>
+          <span>Location map</span>
+        </div>
+      </div>
+      <div class="checkout-panel map-panel delivery-map-shell">
+        <div class="map-panel-header">
+          <div><strong>Live delivery map</strong><span>Powered by OpenStreetMap</span></div>
+          <span class="status-pill success">India network</span>
+        </div>
+        <div id="delivery-map"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}

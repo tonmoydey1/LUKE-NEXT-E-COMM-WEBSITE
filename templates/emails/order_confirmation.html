@@ -1,0 +1,23 @@
+<div style="margin:0;background:#f5f8fc;padding:28px 0;font-family:Inter,Arial,sans-serif;color:#0f172a">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px;margin:0 auto;background:#ffffff;border:1px solid #e5eaf3;border-radius:14px;overflow:hidden">
+    <tr>
+      <td style="background:linear-gradient(135deg,#062f69,#0b4aa2 62%,#d7a928);padding:30px;color:#ffffff">
+        <div style="font-size:14px;font-weight:800;color:#ffeaa0">Order confirmed</div>
+        <h1 style="margin:10px 0 6px;font-size:34px;line-height:1.1;color:#ffffff">Thank you for your order</h1>
+        <p style="margin:0;color:#eaf2ff;font-size:16px">Your LuxeNest order <strong>{{ order.order_id }}</strong> has been placed successfully.</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:28px">
+        <p style="font-size:16px;margin:0 0 18px">Hi {{ order.user.first_name|default:order.user.username }}, your order is confirmed and moving into processing.</p>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:separate;border-spacing:0 10px">
+          <tr><td style="padding:14px;background:#f8fbff;border:1px solid #e5eaf3;border-radius:10px"><strong>Order ID</strong><br><span style="color:#0b4aa2">{{ order.order_id }}</span></td></tr>
+          <tr><td style="padding:14px;background:#fff8df;border:1px solid #f0d77a;border-radius:10px"><strong>Total</strong><br><span style="font-size:22px;color:#062f69;font-weight:900">Rs. {{ order.total|floatformat:2 }}</span></td></tr>
+          <tr><td style="padding:14px;background:#f8fbff;border:1px solid #e5eaf3;border-radius:10px"><strong>Estimated delivery</strong><br>{% if order.estimated_delivery %}{{ order.estimated_delivery|date:"d M Y" }}{% else %}Updating soon{% endif %}</td></tr>
+        </table>
+        <p style="margin:18px 0 0;color:#667085">A professional invoice is generated for this order. You can download it from your LuxeNest order details page.</p>
+      </td>
+    </tr>
+    <tr><td style="padding:18px 28px;background:#08111f;color:#cbd5e1;font-size:13px">LuxeNest Support: tonmoydeyrick@gmail.com</td></tr>
+  </table>
+</div>

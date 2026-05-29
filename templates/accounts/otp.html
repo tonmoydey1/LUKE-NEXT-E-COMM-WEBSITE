@@ -1,0 +1,2 @@
+{% extends "base.html" %}
+{% block content %}<section class="py-5"><div class="container col-lg-5"><form class="auth-panel p-4" method="post">{% csrf_token %}<h1 class="section-title">Verify OTP</h1><p>Enter the 6-digit code sent to {{ user.email }}.</p>{{ form.as_p }}<button class="lux-btn w-100">Verify</button></form></div></section>{% endblock %}

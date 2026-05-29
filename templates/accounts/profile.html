@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Profile | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container col-xl-8">
+    <form class="dashboard-panel account-form p-4" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <span class="badge badge-gold">Personal details</span>
+      <h1 class="section-title mt-2">Profile</h1>
+      <div class="row g-3">
+        {% for field in form %}
+          <div class="col-md-6">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+      <button class="lux-btn mt-4">Save Profile</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

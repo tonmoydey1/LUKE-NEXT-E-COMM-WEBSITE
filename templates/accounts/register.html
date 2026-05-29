@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Register | LuxeNest{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="container">
+    <div class="auth-shell auth-shell-wide">
+      <div class="auth-copy">
+        <span class="badge badge-gold">Join LuxeNest</span>
+        <h1>Create your account</h1>
+        <p>Sign up with OTP email verification and start shopping with saved addresses, invoices, order tracking, and premium-ready benefits.</p>
+        <div class="auth-benefits">
+          <span>Verified email signup</span>
+          <span>Fast checkout addresses</span>
+          <span>Invoices and live tracking</span>
+        </div>
+      </div>
+      <form class="auth-panel auth-form" method="post">
+        {% csrf_token %}
+        <h2 class="section-title">Register</h2>
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="row g-3">
+          {% for field in form %}
+            <div class="{% if field.name == 'password2' %}col-12 col-md-6{% else %}col-md-6{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% for error in field.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        <button class="lux-btn w-100 mt-4">Create Account</button>
+        <div class="auth-links justify-content-center">
+          <span>Already have an account?</span>
+          <a href="{% url 'accounts:login' %}">Login</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

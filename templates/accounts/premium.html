@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Premium | LuxeNest{% endblock %}
+{% block content %}
+<section class="soft-band premium-page py-5">
+  <div class="container">
+    <div class="premium-heading">
+      <span class="badge badge-gold">LuxeNest Premium</span>
+      <h1 class="section-title">Upgrade with Card or UPI</h1>
+      <p>Activate premium benefits through a payment-style flow for priority delivery, exclusive discounts, and early access deals.</p>
+    </div>
+    <div class="row g-4 mt-2">
+      {% for plan in plans %}
+        <div class="col-md-6">
+          <form class="premium-card h-100" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="plan" value="{{ plan.code }}">
+            <div class="d-flex justify-content-between align-items-start gap-3">
+              <div>
+                <span class="badge badge-gold">Exclusive</span>
+                <h3 class="fw-bold mt-3">{{ plan.name }}</h3>
+              </div>
+              <span class="premium-chip">{{ plan.duration }} days</span>
+            </div>
+            <p>Priority delivery, premium-only offers, early access deals, invoice priority, and extra member discounts.</p>
+            <div class="display-6 price">Rs. {{ plan.amount }}</div>
+            <div class="premium-payments">
+              <label><input type="radio" name="payment_method" value="card" checked> Card</label>
+              <label><input type="radio" name="payment_method" value="upi"> UPI</label>
+            </div>
+            <button class="lux-btn mt-3">Pay & Activate</button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}LuxeNest | Premium Ecommerce{% endblock %}
+{% block content %}
+<section id="luxeHeroCarousel" class="hero carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4200" data-bs-touch="true">
+  <div class="carousel-indicators hero-indicators">
+    <button type="button" data-bs-target="#luxeHeroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Premium marketplace"></button>
+    <button type="button" data-bs-target="#luxeHeroCarousel" data-bs-slide-to="1" aria-label="Home essentials"></button>
+    <button type="button" data-bs-target="#luxeHeroCarousel" data-bs-slide-to="2" aria-label="Indian fashion"></button>
+    <button type="button" data-bs-target="#luxeHeroCarousel" data-bs-slide-to="3" aria-label="Smart electronics"></button>
+  </div>
+  <div class="carousel-inner hero-carousel-inner">
+    <div class="carousel-item active hero-slide" style="--hero-image: url('https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=1800&q=85');">
+      <div class="container hero-slide-grid">
+        <div class="hero-copy">
+          <span class="badge badge-gold mb-3">India-wide premium marketplace</span>
+          <h1>LuxeNest</h1>
+          <p class="lead fs-4">Flipkart-scale shopping flow with luxury curation, secure Razorpay checkout, invoices, tracking, and polished account experiences.</p>
+          <div class="hero-highlights">
+            <span>UPI/Card/COD</span>
+            <span>GST invoice</span>
+            <span>Live tracking</span>
+          </div>
+          <div class="hero-actions d-flex gap-3 mt-4">
+            <a class="lux-btn" href="{% url 'catalog:product_list' %}">Start Shopping</a>
+            <a class="lux-btn btn-blue" href="{% url 'accounts:premium' %}">Explore Premium</a>
+          </div>
+        </div>
+        <div class="hero-deal-card">
+          <span>Today on LuxeNest</span>
+          <strong>Luxury deals up to 40% off</strong>
+          <p>Premium products, verified payments, and invoice-ready checkout.</p>
+          <a href="{% url 'catalog:product_list' %}">View deals</a>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item hero-slide" style="--hero-image: url('https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=1800&q=85');">
+      <div class="container hero-slide-grid">
+        <div class="hero-copy">
+          <span class="badge badge-gold mb-3">Fresh Indian essentials</span>
+          <h1>Home, Grocery & Daily Luxury</h1>
+          <p class="lead fs-4">Bring curated pantry boxes, coffee, dinnerware, bedding, decor, and wellness essentials into your home.</p>
+          <div class="hero-highlights">
+            <span>Fresh picks</span>
+            <span>Premium home</span>
+            <span>Fast ETA</span>
+          </div>
+          <div class="hero-actions d-flex gap-3 mt-4">
+            <a class="lux-btn" href="{% url 'catalog:product_list' %}?q=grocery">Shop Grocery</a>
+            <a class="lux-btn btn-blue" href="{% url 'catalog:product_list' %}?q=home">Home Living</a>
+          </div>
+        </div>
+        <div class="hero-deal-card">
+          <span>Curated home sale</span>
+          <strong>Comfort essentials from Rs. 799</strong>
+          <p>Indian households, premium utility, beautiful invoices.</p>
+          <a href="{% url 'catalog:product_list' %}?q=home">Explore home</a>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item hero-slide" style="--hero-image: url('https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=1800&q=85');">
+      <div class="container hero-slide-grid">
+        <div class="hero-copy">
+          <span class="badge badge-gold mb-3">Festive Indian collection</span>
+          <h1>Silks, Jewellery & Luxury Fashion</h1>
+          <p class="lead fs-4">Curated sarees, gold-tone accessories, premium bags, and occasion-ready fashion with verified checkout and GST invoices.</p>
+          <div class="hero-highlights">
+            <span>Saree edit</span>
+            <span>Gold accents</span>
+            <span>Premium badge</span>
+          </div>
+          <div class="hero-actions d-flex gap-3 mt-4">
+            <a class="lux-btn" href="{% url 'catalog:product_list' %}?q=saree">Shop Fashion</a>
+            <a class="lux-btn btn-blue" href="{% url 'catalog:product_list' %}?q=jewellery">View Jewellery</a>
+          </div>
+        </div>
+        <div class="hero-deal-card">
+          <span>Festive showcase</span>
+          <strong>Silks, bangles and premium bags</strong>
+          <p>Portfolio-ready Indian marketplace experience.</p>
+          <a href="{% url 'catalog:product_list' %}?q=saree">Shop festive</a>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item hero-slide" style="--hero-image: url('https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=1800&q=85');">
+      <div class="container hero-slide-grid">
+        <div class="hero-copy">
+          <span class="badge badge-gold mb-3">Smart home and electronics</span>
+          <h1>Premium Tech Deals</h1>
+          <p class="lead fs-4">Shop headphones, laptops, phones, appliances, and home essentials with fast delivery checks and secure payment options.</p>
+          <div class="hero-highlights">
+            <span>Smart devices</span>
+            <span>Razorpay ready</span>
+            <span>COD enabled</span>
+          </div>
+          <div class="hero-actions d-flex gap-3 mt-4">
+            <a class="lux-btn" href="{% url 'catalog:product_list' %}?q=electronics">Shop Electronics</a>
+            <a class="lux-btn btn-blue" href="{% url 'orders:delivery_checker' %}">Check Delivery</a>
+          </div>
+        </div>
+        <div class="hero-deal-card">
+          <span>Tech week</span>
+          <strong>Phones, laptops and appliances</strong>
+          <p>Secure checkout with order tracking and email invoice.</p>
+          <a href="{% url 'catalog:product_list' %}?q=electronics">Browse tech</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev hero-control" type="button" data-bs-target="#luxeHeroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next hero-control" type="button" data-bs-target="#luxeHeroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</section>
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4"><h2 class="section-title">Featured Products</h2><a href="{% url 'catalog:product_list' %}">View all</a></div>
+    <div class="product-grid">{% for product in featured %}{% include "includes/product_card.html" %}{% empty %}<p>Add products from admin to populate this showcase.</p>{% endfor %}</div>
+  </div>
+</section>
+<section class="soft-band py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4"><h2 class="section-title">Shop by Category</h2><a href="{% url 'catalog:product_list' %}">Explore all</a></div>
+    <div class="category-grid">
+      {% for category in categories %}
+        <a class="category-card" href="{% url 'catalog:category' category.slug %}">
+          <img src="{{ category.hero_image }}" alt="{{ category.name }}">
+          <span>{{ category.name }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<section class="py-5">
+  <div class="container">
+    <h2 class="section-title mb-4">Trending Now</h2>
+    <div class="product-grid">{% for product in trending %}{% include "includes/product_card.html" %}{% empty %}<p>Trending products will appear here.</p>{% endfor %}</div>
+  </div>
+</section>
+{% endblock %}

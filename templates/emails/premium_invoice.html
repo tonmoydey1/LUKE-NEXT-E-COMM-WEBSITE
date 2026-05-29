@@ -1,0 +1,12 @@
+<div style="font-family:Inter,Arial,sans-serif;color:#0f172a;line-height:1.55">
+  <h2 style="color:#0b4aa2;margin-bottom:8px">Your LuxeNest Premium invoice is ready</h2>
+  <p>Hi {{ payment.user.first_name|default:payment.user.username }},</p>
+  <p>Your Premium membership invoice <strong>{{ invoice_no }}</strong> is attached as a PDF.</p>
+  <p><strong>Plan:</strong> {{ payment.get_plan_display }}<br>
+     <strong>Amount:</strong> Rs. {{ payment.amount|floatformat:2 }}<br>
+     <strong>Payment mode:</strong> {{ payment.method|upper }}</p>
+  {% if membership %}
+    <p><strong>Valid until:</strong> {{ membership.expires_at|date:"d M Y" }}</p>
+  {% endif %}
+  <p>Thank you for being a LuxeNest Premium member.</p>
+</div>

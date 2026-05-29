@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | LuxeNest{% endblock %}
+{% block content %}
+<section class="product-detail-page py-5">
+  <div class="container">
+    <div class="product-detail-shell">
+      <div class="product-gallery-panel">
+        <span class="deal-ribbon">{{ product.discount_percent }}% off</span>
+        <img src="{{ product.hero_image }}" alt="{{ product.name }}">
+      </div>
+      <div class="product-info-panel">
+        <div class="product-breadcrumb">{{ product.brand }} / {{ product.category.name }}</div>
+        <h1 class="section-title">{{ product.name }}</h1>
+        <div class="rating-row mb-3"><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><strong>{{ product.rating }}</strong><span>{{ product.review_count }} verified reviews</span></div>
+        <p class="product-detail-copy">{{ product.description }}</p>
+        <div class="product-price-stack">
+          <span class="price">Rs. {{ product.price }}</span>
+          <span class="mrp">Rs. {{ product.mrp }}</span>
+          <em>You save {{ product.discount_percent }}%</em>
+        </div>
+        <div class="product-assurance-row">
+          <span>Verified seller</span>
+          <span>GST invoice</span>
+          <span>Easy returns</span>
+        </div>
+        <form method="post" action="{% url 'orders:add_to_cart' %}" class="product-buy-form mt-4">{% csrf_token %}
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          <label><span>Qty</span><input class="form-control" name="quantity" type="number" value="1" min="1"></label>
+          <button class="lux-btn">Add to Cart</button>
+        </form>
+        <form data-pincode-check class="product-delivery-check mt-4">
+          <label>Check delivery ETA</label>
+          <div class="input-group"><input class="form-control" maxlength="6" placeholder="Enter 6-digit pincode"><button class="btn btn-blue">Check</button></div>
+          <div data-output class="mt-2 small"></div>
+        </form>
+        <a class="wishlist-detail-btn mt-3" href="{% url 'catalog:toggle_wishlist' product.id %}">&#9825; Save to Wishlist</a>
+      </div>
+    </div>
+    <hr class="my-5">
+    <div class="listing-toolbar">
+      <div><strong>Related Products</strong><span>More premium picks from the LuxeNest catalog.</span></div>
+      <a href="{% url 'catalog:product_list' %}">Explore shop</a>
+    </div>
+    <div class="product-grid product-grid-list">{% for product in related %}{% include "includes/product_card.html" %}{% endfor %}</div>
+  </div>
+</section>
+{% endblock %}

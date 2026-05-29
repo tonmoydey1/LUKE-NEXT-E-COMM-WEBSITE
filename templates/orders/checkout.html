@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="py-5 checkout-page">
+  <div class="container">
+    <div class="page-heading">
+      <span class="badge badge-gold">Secure checkout</span>
+      <h1 class="section-title">Checkout</h1>
+      <p class="text-muted mb-0">Confirm delivery, choose payment, and place your LuxeNest order safely.</p>
+    </div>
+    <div class="cart-progress checkout-progress mb-4">
+      <span>1. Bag</span>
+      <span class="active">2. Checkout</span>
+      <span>3. Payment</span>
+      <span>4. Invoice</span>
+    </div>
+    <form method="post" class="row g-4 align-items-start">
+      {% csrf_token %}
+      <div class="col-lg-8">
+        <div class="checkout-panel checkout-main-panel p-4">
+          <div class="checkout-section-head">
+            <div><span>01</span><h4>Delivery Address</h4></div>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'accounts:addresses' %}">Add Address</a>
+          </div>
+          {% for address in addresses %}
+            <label class="address-option">
+              <input type="radio" name="address" value="{{ address.id }}" {% if forloop.first %}checked{% endif %} required>
+              <span>
+                <strong>{{ address.full_name }}</strong>
+                <small>{{ address.line1 }}{% if address.line2 %}, {{ address.line2 }}{% endif %}, {{ address.city }}, {{ address.state }} - {{ address.pincode }}</small>
+                <em>{{ address.get_address_type_display }} address | Phone {{ address.phone }}</em>
+              </span>
+            </label>
+          {% empty %}
+            <div class="empty-state">
+              <h5>No delivery address saved</h5>
+              <p>Add one address before placing your order. This prevents checkout errors and lets LuxeNest verify pincode serviceability.</p>
+              <a class="lux-btn d-inline-block" href="{% url 'accounts:addresses' %}">Add Address</a>
+            </div>
+          {% endfor %}
+          <div class="checkout-section-head mt-4">
+            <div><span>02</span><h4>Payment Method</h4></div>
+          </div>
+          <div class="payment-options checkout-payment-options">
+            <label><input type="radio" name="payment_method" value="razorpay" checked><span><strong>Card / UPI</strong><small>Razorpay checkout with UPI sandbox fallback</small></span></label>
+            <label><input type="radio" name="payment_method" value="cod"><span><strong>Cash on Delivery</strong><small>Pay when your order arrives</small></span></label>
+          </div>
+          <div class="checkout-assurance-row">
+            <span>Serviceable Indian pincodes</span>
+            <span>PDF invoice after order</span>
+            <span>Tracking updates enabled</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="checkout-panel order-summary p-4">
+          <div class="summary-head">
+            <span class="badge badge-gold">Order summary</span>
+            <h4 class="fw-bold mb-0">Payment Breakdown</h4>
+          </div>
+          <div class="summary-row"><span>Subtotal</span><strong>Rs. {{ cart.subtotal|floatformat:2 }}</strong></div>
+          <div class="summary-row"><span>GST/Tax</span><strong>Rs. {{ cart.tax|floatformat:2 }}</strong></div>
+          <div class="summary-row"><span>Shipping</span><strong>Rs. {{ cart.shipping|floatformat:2 }}</strong></div>
+          <div class="summary-row"><span>Discount</span><strong>- Rs. {{ cart.discount|floatformat:2 }}</strong></div>
+          <div class="summary-total"><span>Total</span><strong>Rs. {{ cart.total|floatformat:2 }}</strong></div>
+          <button class="lux-btn w-100 mt-3" {% if not addresses %}disabled{% endif %}>Place Order</button>
+          <div class="summary-assurance">
+            <span>Secure session checkout</span>
+            <span>Invoice generated instantly</span>
+            <span>Support: tonmoydeyrick@gmail.com</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

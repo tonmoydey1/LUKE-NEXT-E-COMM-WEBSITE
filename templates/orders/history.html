@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Order History | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container">
+    <div class="page-heading"><span class="badge badge-gold">Purchases</span><h1 class="section-title">Order History</h1></div>
+    <div class="dashboard-panel p-4">
+      {% for order in orders %}
+        <a class="order-row" href="{% url 'orders:detail' order.order_id %}">
+          <span><strong>{{ order.order_id }}</strong><small>{{ order.created_at|date:"d M Y" }}</small></span>
+          <span>Rs. {{ order.total|floatformat:2 }}</span>
+          <em>{{ order.get_status_display }}</em>
+        </a>
+      {% empty %}
+        <div class="empty-state"><h5>No orders found</h5><p>Completed checkout orders will appear here with tracking and invoices.</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

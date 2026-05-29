@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Payment | LuxeNest{% endblock %}
+{% block content %}
+<section class="payment-page py-5">
+  <div class="container payment-page-container">
+    <div class="checkout-panel payment-card p-4">
+      <span class="badge badge-gold">Secure checkout</span>
+      <h1 class="section-title mt-3">Choose Payment Method</h1>
+      <p class="text-muted">Pay Rs. {{ order.total }} by UPI, Card, or choose Cash on Delivery.</p>
+      {% if not gateway_ready %}
+        <div class="payment-demo-notice mb-3">
+          <h5>LuxeNest Pay sandbox active</h5>
+          <p>Razorpay could not create a live test order, so this local checkout uses a project-safe Card/UPI sandbox and still confirms the order, sends email, and generates invoice.</p>
+        </div>
+      {% endif %}
+      <form id="order-payment-form" method="post" action="{% url 'payments:verify' %}">
+        {% csrf_token %}
+        <input type="hidden" name="razorpay_order_id" value="{{ razorpay_order.id }}">
+        <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+        <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+        <div class="premium-payments mb-3">
+          <label>
+            <input type="radio" name="payment_mode" value="card" checked>
+            Card
+            <small>Debit / Credit / EMI</small>
+          </label>
+          <label>
+            <input type="radio" name="payment_mode" value="upi">
+            UPI
+            <small>GPay / PhonePe / Paytm</small>
+          </label>
+        </div>
+        <div class="upi-test-box mb-3" data-sandbox-box>
+          <label class="fw-bold" data-sandbox-label>Card details</label>
+          <input class="form-control" name="sandbox_card" value="4111 1111 1111 1111" aria-label="Card number" data-card-input>
+          <input class="form-control mt-2 d-none" name="sandbox_upi_id" value="success@luxenest" aria-label="UPI ID" data-upi-input>
+          <small data-sandbox-help>Use test card 4111 1111 1111 1111, CVV 123, expiry 12/30.</small>
+        </div>
+        <button type="button" id="sandbox-pay-button" class="lux-btn w-100">Complete Sandbox Card Payment</button>
+        {% if gateway_ready %}
+          <button type="button" id="rzp-order-button" class="btn btn-outline-primary w-100 mt-3">Open Razorpay Card Checkout</button>
+          <p class="small text-muted mt-3 mb-0" data-payment-note>Sandbox UPI is enabled for demos. Razorpay Card is available when the gateway accepts the configured keys.</p>
+        {% else %}
+          <p class="small text-muted mt-3 mb-0" data-payment-note>Use the sandbox payment to finish your local project flow without external gateway errors.</p>
+        {% endif %}
+      </form>
+      <a class="btn btn-outline-dark w-100 mt-3" href="{% url 'orders:checkout' %}">Choose Cash on Delivery</a>
+    </div>
+  </div>
+</section>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const orderPaymentForm = document.getElementById("order-payment-form");
+  const paymentModeInputs = document.querySelectorAll("input[name='payment_mode']");
+  const sandboxButton = document.getElementById("sandbox-pay-button");
+  const cardButton = document.getElementById("rzp-order-button");
+  const sandboxLabel = document.querySelector("[data-sandbox-label]");
+  const sandboxHelp = document.querySelector("[data-sandbox-help]");
+  const cardInput = document.querySelector("[data-card-input]");
+  const upiInput = document.querySelector("[data-upi-input]");
+  const updatePaymentMode = () => {
+    const selected = document.querySelector("input[name='payment_mode']:checked").value;
+    const isUpi = selected === "upi";
+    sandboxLabel.textContent = isUpi ? "UPI ID" : "Card details";
+    sandboxHelp.textContent = isUpi ? "Use success@luxenest for a successful UPI sandbox payment." : "Use test card 4111 1111 1111 1111, CVV 123, expiry 12/30.";
+    sandboxButton.textContent = isUpi ? "Complete Sandbox UPI Payment" : "Complete Sandbox Card Payment";
+    cardInput.classList.toggle("d-none", isUpi);
+    upiInput.classList.toggle("d-none", !isUpi);
+  };
+  paymentModeInputs.forEach((input) => input.addEventListener("change", updatePaymentMode));
+  updatePaymentMode();
+
+  sandboxButton.addEventListener("click", function () {
+      const selectedMethod = document.querySelector("input[name='payment_mode']:checked").value;
+      const upiId = upiInput.value.trim();
+      const cardNumber = cardInput.value.replace(/\s+/g, "");
+      if (selectedMethod === "upi" && (!upiId || !upiId.includes("@"))) {
+        alert("Please enter a valid UPI ID.");
+        return;
+      }
+      if (selectedMethod === "card" && cardNumber.length < 12) {
+        alert("Please enter a valid test card number.");
+        return;
+      }
+      document.getElementById("razorpay_payment_id").value = `lxn_test_${selectedMethod}_{{ payment.transaction_id }}`;
+      document.getElementById("razorpay_signature").value = "lxn_debug_signature";
+      orderPaymentForm.submit();
+  });
+  if (cardButton) cardButton.addEventListener("click", function () {
+    const displayConfig = {
+      blocks: {
+        preferred: {
+          name: "Pay using Card",
+          instruments: [{ method: "card" }]
+        }
+      },
+      sequence: ["block.preferred"],
+      preferences: { show_default_blocks: false }
+    };
+    const checkout = new Razorpay({
+      key: "{{ razorpay_key_id }}",
+      amount: "{{ razorpay_order.amount }}",
+      currency: "INR",
+      name: "LuxeNest",
+      description: "Order {{ order.order_id }}",
+      order_id: "{{ razorpay_order.id }}",
+      remember_customer: false,
+      config: { display: displayConfig },
+      prefill: {
+        name: "{{ request.user.get_full_name|default:request.user.username }}",
+        email: "{{ request.user.email }}",
+        contact: "{{ request.user.profile.phone }}"
+      },
+      theme: { color: "#0B4AA2" },
+      modal: {
+        escape: true,
+        ondismiss: function () {
+          const note = document.querySelector("[data-payment-note]");
+          if (note) note.textContent = "Payment window closed. You can retry or choose Cash on Delivery from checkout.";
+        }
+      },
+      handler: function (response) {
+        document.getElementById("razorpay_payment_id").value = response.razorpay_payment_id;
+        document.getElementById("razorpay_signature").value = response.razorpay_signature;
+        orderPaymentForm.submit();
+      }
+    });
+    checkout.open();
+  });
+</script>
+{% endblock %}

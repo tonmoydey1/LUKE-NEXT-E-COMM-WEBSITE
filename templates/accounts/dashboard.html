@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container">
+    <div class="dashboard-hero">
+      <div>
+        <span class="badge badge-gold">Account center</span>
+        <h1 class="section-title">Your Dashboard</h1>
+        <p>Manage orders, saved products, delivery addresses, invoices, and LuxeNest Premium from one polished workspace.</p>
+      </div>
+      <div class="dashboard-identity">
+        <span>{{ request.user.first_name|default:request.user.username|slice:":1"|upper }}</span>
+        <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+        <small>{{ request.user.email }}</small>
+      </div>
+    </div>
+    <div class="dashboard-stats">
+      <div><span>Orders</span><strong>{{ orders|length }}</strong><small>Recent purchases</small></div>
+      <div><span>Membership</span><strong>{% if active_membership %}Premium{% else %}Standard{% endif %}</strong><small>{% if active_membership %}Active benefits{% else %}Upgrade available{% endif %}</small></div>
+      <div><span>Delivery</span><strong>India-wide</strong><small>Pincode ETA ready</small></div>
+    </div>
+    <div class="account-layout">
+      <aside class="account-menu">
+        <a href="{% url 'accounts:profile' %}"><span>&#128100;</span> Profile</a>
+        <a href="{% url 'accounts:addresses' %}"><span>&#127968;</span> Addresses</a>
+        <a href="{% url 'orders:history' %}"><span>&#128230;</span> Orders</a>
+        <a href="{% url 'catalog:wishlist' %}"><span>&#9825;</span> Wishlist</a>
+        <a href="{% url 'orders:delivery_checker' %}"><span>&#128205;</span> Check Delivery</a>
+        <a href="{% url 'accounts:premium_details' %}"><span>&#10022;</span> Premium Details</a>
+      </aside>
+      <div class="dashboard-panel dashboard-orders-panel p-4">
+        {% if active_membership %}
+          <div class="premium-status-strip mb-4">
+            <div>
+              <span class="badge badge-gold">Premium member</span>
+              <h5>{{ active_membership.get_plan_display }} plan active</h5>
+              <p>Valid until {{ active_membership.expires_at|date:"d M Y, h:i A" }}</p>
+            </div>
+            <a class="btn btn-outline-primary" href="{% url 'accounts:premium_details' %}">Manage</a>
+          </div>
+        {% endif %}
+        <div class="dashboard-panel-head">
+          <div>
+            <span class="badge badge-gold">Purchases</span>
+            <h4>Recent Orders</h4>
+          </div>
+          <a class="btn btn-outline-primary btn-sm" href="{% url 'orders:history' %}">View all</a>
+        </div>
+        {% for order in orders %}
+          <a class="order-row" href="{% url 'orders:detail' order.order_id %}">
+            <span class="order-row-id"><strong>{{ order.order_id }}</strong><small>{{ order.created_at|date:"d M Y" }} · Invoice and tracking ready</small></span>
+            <span class="order-row-total">Rs. {{ order.total|floatformat:2 }}</span>
+            <em>{{ order.get_status_display }}</em>
+          </a>
+        {% empty %}
+          <div class="empty-state"><h5>No orders yet</h5><p>Your recent purchases and tracking shortcuts will appear here.</p></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

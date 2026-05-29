@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Order Placed | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container">
+    <div class="success-layout">
+      <div class="checkout-panel success-card">
+        <div class="success-icon">&#10003;</div>
+        <span class="badge badge-gold">Order confirmed</span>
+        <h1 class="section-title mt-3">Order Placed Successfully</h1>
+        <p class="success-lead">Your LuxeNest order <strong>{{ order.order_id }}</strong> is confirmed and the invoice PDF is ready.</p>
+
+        <div class="success-meta-grid">
+          <div><small>Order total</small><strong>Rs. {{ order.total|floatformat:2 }}</strong></div>
+          <div><small>Payment</small><strong>{{ order.payment_method|upper }}</strong></div>
+          <div><small>Status</small><strong>{{ order.get_status_display }}</strong></div>
+          <div><small>Estimated delivery</small><strong>{% if order.estimated_delivery %}{{ order.estimated_delivery|date:"d M Y" }}{% else %}Updating soon{% endif %}</strong></div>
+        </div>
+
+        <div class="success-actions">
+          <a class="lux-btn" href="{% url 'orders:track' order.order_id %}">Track Order</a>
+          <a class="btn btn-blue" href="{% url 'orders:invoice' order.order_id %}">View Invoice</a>
+          <a class="btn btn-outline-primary" href="{% url 'orders:invoice' order.order_id %}?download=pdf">Download PDF</a>
+          <a class="btn btn-outline-secondary" href="{% url 'orders:invoice' order.order_id %}?download=pdf&email=1">Download & Email</a>
+        </div>
+      </div>
+
+      <aside class="dashboard-panel success-side-card">
+        <h4>What happens next?</h4>
+        <div class="success-next-step"><span>1</span><div><strong>Order verification</strong><small>We confirm payment, address, and item availability.</small></div></div>
+        <div class="success-next-step"><span>2</span><div><strong>Packing update</strong><small>Your tracking timeline updates as the order moves.</small></div></div>
+        <div class="success-next-step"><span>3</span><div><strong>Invoice access</strong><small>Download the GST invoice now or email it after SMTP setup.</small></div></div>
+        <a class="btn btn-outline-primary w-100 mt-3" href="{% url 'orders:detail' order.order_id %}">Open Order Details</a>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock %}

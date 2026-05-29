@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Cart | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container">
+    <div class="page-heading">
+      <span class="badge badge-gold">Your bag</span>
+      <h1 class="section-title">Shopping Cart</h1>
+      <p class="text-muted mb-0">Review items, apply offers, and continue to LuxeNest secure checkout.</p>
+    </div>
+    <div class="cart-progress mb-4">
+      <span class="active">1. Bag</span>
+      <span>2. Address</span>
+      <span>3. Payment</span>
+      <span>4. Invoice</span>
+    </div>
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-8">
+        {% for item in cart.items.all %}
+          <div class="cart-item-card">
+            <a class="cart-item-media" href="{{ item.product.get_absolute_url }}"><img src="{{ item.product.hero_image }}" alt="{{ item.product.name }}"></a>
+            <div class="cart-item-body">
+              <div class="cart-item-copy">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-1">
+                  <span class="cart-brand">{{ item.product.brand|default:item.product.category.name }}</span>
+                  {% if item.product.discount_percent %}<span class="badge badge-gold">{{ item.product.discount_percent }}% off</span>{% endif %}
+                </div>
+                <h5><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></h5>
+                <div class="cart-rating"><span>&#9733;&#9733;&#9733;&#9733;&#9733;</span> {{ item.product.rating }} | {{ item.product.review_count }} reviews</div>
+                <div class="cart-price-line">
+                  <span class="price">Rs. {{ item.line_total|floatformat:2 }}</span>
+                  <small>Unit price Rs. {{ item.unit_price|floatformat:2 }}</small>
+                </div>
+                <div class="cart-delivery-note">Free delivery eligible on orders above Rs. 1499</div>
+              </div>
+              <form method="post" action="{% url 'orders:update_cart_item' item.id %}" class="cart-actions">
+                {% csrf_token %}
+                <label>
+                  <span>Qty</span>
+                  <input class="form-control" name="quantity" type="number" value="{{ item.quantity }}" min="1" max="10">
+                </label>
+                <div class="cart-action-buttons">
+                  <button class="btn btn-outline-primary">Update</button>
+                  <a class="btn btn-outline-danger" href="{% url 'orders:remove_cart_item' item.id %}">Remove</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state">
+            <h5>Your cart is empty</h5>
+            <p>Add products to continue to checkout with Card, UPI, or Cash on Delivery.</p>
+            <a class="lux-btn d-inline-block" href="{% url 'catalog:product_list' %}">Shop Products</a>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="col-lg-4">
+        <div class="checkout-panel order-summary p-4">
+          <div class="summary-head">
+            <span class="badge badge-gold">Secure checkout</span>
+            <h4 class="fw-bold">Price Summary</h4>
+          </div>
+          <div class="summary-row"><span>Subtotal</span><strong>Rs. {{ cart.subtotal|floatformat:2 }}</strong></div>
+          <div class="summary-row"><span>GST/Tax</span><strong>Rs. {{ cart.tax|floatformat:2 }}</strong></div>
+          <div class="summary-row"><span>Shipping</span><strong>Rs. {{ cart.shipping|floatformat:2 }}</strong></div>
+          <div class="summary-row"><span>Discount</span><strong>- Rs. {{ cart.discount|floatformat:2 }}</strong></div>
+          <div class="summary-total"><span>Total</span><strong>Rs. {{ cart.total|floatformat:2 }}</strong></div>
+          <form method="post" action="{% url 'orders:apply_coupon' %}" class="coupon-box my-3">
+            {% csrf_token %}
+            <input class="form-control mb-2" name="code" placeholder="Try LUXE10">
+            <button class="btn btn-outline-dark w-100">Apply Coupon</button>
+          </form>
+          <a class="lux-btn d-block text-center" href="{% url 'orders:checkout' %}">Checkout</a>
+          <div class="summary-assurance">
+            <span>Card, UPI, and COD supported</span>
+            <span>GST invoice generated after order</span>
+            <span>Order tracking with delivery updates</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

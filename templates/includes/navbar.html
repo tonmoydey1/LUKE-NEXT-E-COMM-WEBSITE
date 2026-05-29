@@ -1,0 +1,41 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg sticky-top lux-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'catalog:home' %}"><img class="brand-logo" src="{% static 'img/logo.svg' %}" alt="LuxeNest"></a>
+    <div class="mobile-quick-actions">
+      {% if active_premium_membership %}
+        <a class="mobile-premium-chip" href="{% url 'accounts:premium_details' %}" aria-label="Premium Member">&#10022; <span>Premium</span></a>
+      {% else %}
+        <a class="mobile-premium-chip" href="{% url 'accounts:premium' %}" aria-label="Premium">&#10022; <span>Premium</span></a>
+      {% endif %}
+      <a class="mobile-cart-chip" href="{% url 'orders:cart' %}" aria-label="Cart">&#128722;<strong>{{ cart_count }}</strong></a>
+    </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <form class="search-form mx-lg-3 my-3 my-lg-0 flex-grow-1 position-relative" action="{% url 'catalog:search' %}">
+        <span class="search-icon">&#128269;</span>
+        <input class="form-control search-input" name="q" autocomplete="off" placeholder="Search products, brands, categories..." data-autocomplete="#suggestions">
+        <button class="nav-search-submit" type="submit" aria-label="Search"><span>&#128269;</span> Search</button>
+        <div id="suggestions" class="search-suggestions dropdown-menu w-100 border-0 shadow"></div>
+      </form>
+      <ul class="navbar-nav align-items-lg-center gap-lg-2">
+        <li class="nav-item"><a class="nav-link nav-pill" href="{% url 'catalog:product_list' %}"><span>&#128717;</span> Shop</a></li>
+        <li class="nav-item"><a class="nav-link nav-pill" href="{% url 'orders:delivery_checker' %}"><span>&#128205;</span> Delivery</a></li>
+        {% if active_premium_membership %}
+          <li class="nav-item nav-premium-menu"><a class="nav-link nav-pill premium-nav premium-active-nav" href="{% url 'accounts:premium_details' %}"><span>&#10022;</span> Premium Member</a></li>
+        {% else %}
+          <li class="nav-item nav-premium-menu"><a class="nav-link nav-pill premium-nav" href="{% url 'accounts:premium' %}"><span>&#10022;</span> Premium</a></li>
+        {% endif %}
+        <li class="nav-item"><a class="nav-link nav-pill" href="{% url 'catalog:wishlist' %}"><span>&#9825;</span> Wishlist</a></li>
+        <li class="nav-item nav-cart-menu"><a class="nav-link nav-pill cart-nav" href="{% url 'orders:cart' %}"><span>&#128722;</span> Cart <strong>{{ cart_count }}</strong></a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link nav-pill" href="{% url 'accounts:dashboard' %}"><span>&#128100;</span> Account</a></li>
+          <li class="nav-item"><a class="btn btn-sm logout-btn" href="{% url 'accounts:logout' %}">Logout</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link nav-pill" href="{% url 'accounts:register' %}"><span>+</span> Register</a></li>
+          <li class="nav-item"><a class="btn btn-sm btn-blue nav-login" href="{% url 'accounts:login' %}">Login</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

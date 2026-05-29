@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Premium Invoice {{ invoice_no }} | LuxeNest{% endblock %}
+{% block content %}
+<section class="account-page py-5">
+  <div class="container col-xl-9">
+    <div class="premium-invoice-web">
+      <div class="premium-invoice-hero">
+        <div>
+          <span class="badge badge-gold">Premium Invoice</span>
+          <h1>LuxeNest Premium</h1>
+          <p>Membership invoice <strong>{{ invoice_no }}</strong></p>
+        </div>
+        <div class="premium-invoice-actions">
+          <a class="lux-btn" href="?download=pdf">Download PDF</a>
+          <a class="btn btn-outline-primary" href="{% url 'accounts:send_premium_invoice' payment.id %}">Email Invoice</a>
+          <a class="btn btn-outline-secondary" href="?download=pdf&email=1">Download & Email</a>
+        </div>
+      </div>
+
+      <div class="premium-invoice-grid">
+        <div>
+          <span class="invoice-mini-icon">&#10022;</span>
+          <h6>Member</h6>
+          <p>{{ payment.user.get_full_name|default:payment.user.username }}<br>{{ payment.user.email }}</p>
+        </div>
+        <div>
+          <span class="invoice-mini-icon">&#128179;</span>
+          <h6>Payment</h6>
+          <p>{{ payment.method|upper }}<br>{{ payment.get_status_display }}<br>{{ payment.provider_payment_id|default:payment.transaction_id }}</p>
+        </div>
+        <div>
+          <span class="invoice-mini-icon">&#128197;</span>
+          <h6>Issued On</h6>
+          <p>{{ payment.updated_at|date:"d M Y, h:i A" }}</p>
+        </div>
+      </div>
+
+      <div class="premium-invoice-body">
+        <div class="premium-invoice-plan">
+          <span class="premium-orb">&#10022;</span>
+          <span class="badge badge-gold">Premium membership</span>
+          <h2>{{ payment.get_plan_display }} Plan</h2>
+          <p>Priority delivery messaging, premium-only discounts, early access deals, invoice priority, and LuxeNest Premium Member badge.</p>
+        </div>
+        <div class="premium-invoice-total">
+          <div><span>Plan amount</span><strong>Rs. {{ payment.amount|floatformat:2 }}</strong></div>
+          <div><span>Payment mode</span><strong>{{ payment.method|upper }}</strong></div>
+          <div><span>Transaction</span><strong>{{ payment.transaction_id }}</strong></div>
+          <div class="grand"><span>Grand Total</span><strong>Rs. {{ payment.amount|floatformat:2 }}</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
