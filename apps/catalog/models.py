@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.text import slugify
 
@@ -29,6 +30,15 @@ class Category(models.Model):
     def hero_image(self):
         if self.external_image_url:
             return self.external_image_url
+        if self.image and self.image.name.startswith("categories/greatkart/"):
+            return static(f"greatkart-assets/category/{self.image.name.rsplit('/', 1)[-1]}")
+        if self.image and self.image.name.startswith("categories/forever-"):
+            filename = {
+                "forever-kids.png": "p_img36.png",
+                "forever-men.png": "p_img38.png",
+                "forever-women.png": "p_img1.png",
+            }.get(self.image.name.rsplit("/", 1)[-1], self.image.name.rsplit("/", 1)[-1])
+            return static(f"forever-assets/frontend_assets/{filename}")
         return self.image.url if self.image else "/static/img/product-placeholder.svg"
 
 
@@ -71,6 +81,12 @@ class Product(models.Model):
         if self.external_image_url:
             return self.external_image_url
         image = self.images.filter(is_primary=True).first() or self.images.first()
+        if image and image.image:
+            name = image.image.name
+            if name.startswith("products/forever/"):
+                return static(f"forever-assets/frontend_assets/{name.rsplit('/', 1)[-1]}")
+            if name.startswith("products/greatkart/"):
+                return static(f"greatkart-assets/products/{name.rsplit('/', 1)[-1]}")
         return image.image.url if image and image.image else "/static/img/product-placeholder.svg"
 
     def get_absolute_url(self):
